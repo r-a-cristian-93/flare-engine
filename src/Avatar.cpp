@@ -832,9 +832,18 @@ void Avatar::logic(std::vector<ActionData> &action_queue, bool restrict_power_us
 	}
 
 	// calc new cam position from player position
-	// cam is focused at player position
-	float cam_dx = (Utils::calcDist(FPoint(mapr->cam.x, stats.pos.y), stats.pos)) / eset->misc.camera_speed;
-	float cam_dy = (Utils::calcDist(FPoint(stats.pos.x, mapr->cam.y), stats.pos)) / eset->misc.camera_speed;
+	// cam continually tries to reposition itself to the player's position, usually moving at the camera_speed engine setting
+	// HOWEVER, if the camera is less than a tile away from the player, we exponentially increase the speed to decrease "wobble"
+	float cam_speed = eset->misc.camera_speed;
+	float cam_delta = Utils::calcDist(mapr->cam, stats.pos);
+	if (cam_delta < 1.f) {
+		// 2 is kind of a magic number here. Excluding it makes the camera too fast.
+		const float cam_expo = cam_delta * 2;
+		cam_speed = std::min(eset->misc.camera_speed, powf(eset->misc.camera_speed, cam_expo));
+	}
+
+	float cam_dx = Utils::calcDist(FPoint(mapr->cam.x, stats.pos.y), stats.pos) / cam_speed;
+	float cam_dy = Utils::calcDist(FPoint(stats.pos.x, mapr->cam.y), stats.pos) / cam_speed;
 
 	if (mapr->cam.x < stats.pos.x) {
 		mapr->cam.x += cam_dx;
