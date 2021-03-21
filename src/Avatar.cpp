@@ -840,8 +840,13 @@ void Avatar::logic(std::vector<ActionData> &action_queue, bool restrict_power_us
 
 	if (cam_delta > 0 && !pressing_move()) {
 		if (cam_delta_max == 0) cam_delta_max = Utils::calcDist(mapr->cam, stats.pos);
-		const float cam_expo = cam_delta / cam_delta_max;
-		cam_speed = powf(eset->misc.camera_speed, cam_expo);
+		
+		float cam_delta_divider = 4;
+		
+		if (cam_delta < cam_delta_max / cam_delta_divider) {
+			const float cam_expo = cam_delta / (cam_delta_max / cam_delta_divider);
+			cam_speed = powf(eset->misc.camera_speed, cam_expo);
+		}
 	}
 	else cam_delta_max = 0;
 
