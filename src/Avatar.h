@@ -159,6 +159,7 @@ public:
 	int prev_hp;
 	bool playing_lowhp;
 	bool teleport_camera_lock;
+	float cam_delta_max;
 };
 
 #endif
