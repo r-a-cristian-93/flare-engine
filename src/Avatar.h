@@ -160,6 +160,8 @@ public:
 	bool playing_lowhp;
 	bool teleport_camera_lock;
 	float cam_delta_max;
+	float dx;
+	float dy;
 };
 
 #endif

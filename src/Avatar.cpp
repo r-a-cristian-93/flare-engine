@@ -75,7 +75,9 @@ Avatar::Avatar()
 	, prev_hp(0)
 	, playing_lowhp(false)
 	, teleport_camera_lock(false)
-	, cam_delta_max(0) {
+	, cam_delta_max(0)
+	, dx(0)
+	, dy(0) {
 
 	init();
 
@@ -838,15 +840,19 @@ void Avatar::logic(std::vector<ActionData> &action_queue, bool restrict_power_us
 	float cam_speed = eset->misc.camera_speed;
 	float cam_delta = Utils::calcDist(mapr->cam, stats.pos);
 
-	if (cam_delta > 0 && !pressing_move()) {
-		if (cam_delta_max == 0) cam_delta_max = Utils::calcDist(mapr->cam, stats.pos);
-		const float cam_expo = cam_delta / cam_delta_max;
-		cam_speed = powf(eset->misc.camera_speed, cam_expo);
+	if (cam_delta > 0 && (!pressing_move() || cam_delta > 4)) {
+		if (dx == 0 || dy == 0) {
+			dx = Utils::calcDist(FPoint(mapr->cam.x, stats.pos.y), stats.pos) / cam_speed;
+			dy = Utils::calcDist(FPoint(stats.pos.x, mapr->cam.y), stats.pos) / cam_speed;
+		}
 	}
-	else cam_delta_max = 0;
+	else {
+		dx = 0;
+		dy = 0;
+	}
 
-	float cam_dx = Utils::calcDist(FPoint(mapr->cam.x, stats.pos.y), stats.pos) / cam_speed;
-	float cam_dy = Utils::calcDist(FPoint(stats.pos.x, mapr->cam.y), stats.pos) / cam_speed;
+	float cam_dx = dx;
+	float cam_dy = dy;
 
 	if (mapr->cam.x < stats.pos.x) {
 		mapr->cam.x += cam_dx;
