@@ -297,7 +297,7 @@ void Avatar::loadStepFX(const std::string& stepname) {
 }
 
 
-bool Avatar::pressing_move() {	
+bool Avatar::pressing_move() {
 	if (!allow_movement || teleport_camera_lock) {
 		return false;
 	}
@@ -835,7 +835,6 @@ void Avatar::logic(std::vector<ActionData> &action_queue, bool restrict_power_us
 	// calc new cam position from player position
 	// cam continually tries to reposition itself to the player's position, usually moving at the camera_speed engine setting
 	// HOWEVER, if the camera is less than a tile away from the player, we exponentially increase the speed to decrease "wobble"
-	
 	float cam_speed = eset->misc.camera_speed;
 	float cam_delta = Utils::calcDist(mapr->cam, stats.pos);
 
@@ -845,7 +844,7 @@ void Avatar::logic(std::vector<ActionData> &action_queue, bool restrict_power_us
 		cam_speed = powf(eset->misc.camera_speed, cam_expo);
 	}
 	else cam_delta_max = 0;
-	
+
 	float cam_dx = Utils::calcDist(FPoint(mapr->cam.x, stats.pos.y), stats.pos) / cam_speed;
 	float cam_dy = Utils::calcDist(FPoint(stats.pos.x, mapr->cam.y), stats.pos) / cam_speed;
 
